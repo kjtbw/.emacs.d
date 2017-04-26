@@ -1,3 +1,48 @@
+;;;;;;;;;;;;;plus content
+;display filename on title var
+(setq frame-title-format (format "%%b - %s-%s@%s" invocation-name emacs-version system-name))
+;=> "%b - emacs-23.3.1@HOST-PC"
+
+;; %b : バッファ名を表示する
+;; invocation-name : 起動したEmacsのプログラム名
+;; emacs-version : emacsのバージョン名
+;; system-name : マシン名(ホスト名)
+
+;====================================
+;フレーム位置設定(ウィンドウ）
+;====================================
+( setq initial-frame-alist
+       (append
+        '(;(top . 22)    ; フレームの Y 位置(ピクセル数)
+		  ;(left . 45)    ; フレームの X 位置(ピクセル数)
+		  (width . 82)    ; フレーム幅(文字数)
+		  (height . 41)   ; フレーム高(文字数)
+		  ) initial-frame-alist))
+;; スクリーンの最大化
+;(set-frame-parameter nil 'fullscreen 'maximized)
+
+;key bind
+;(define-key global-map (kbd "M-y") 'anything-show-kill-ring)
+
+;"C-t"でウインドウを切り替える, 初期値はtranspose-chars
+(define-key global-map (kbd "C-t") 'other-window)
+;undo, default undo is "Ctrl_x u, default "Ctrl_u" is none"
+(define-key global-map (kbd "C-u") 'undo)
+
+;; *.~ とかのバックアップファイルをbackupsに保存
+(add-to-list 'backup-directory-alist
+			 (cons "." "~/.emacs.d/backups/"))
+;; .#* とかのバックアップファイルをbackupsに保存
+(setq auto-save-file-name-transforms
+	  '((".*" "~/.emacs.d/backups/" t)))
+;; *.~ とかのバックアップファイルを作らない
+;(setq make-backup-files nil)
+;; .#* とかのバックアップファイルを作らない
+;(setq auto-save-default nil)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq load-path
       (append
        (list
@@ -76,12 +121,6 @@
 ;; 行番号表示
 (global-linum-mode t)
 
-;; *.~ とかのバックアップファイルを作らない
-(setq make-backup-files nil)
-
-;; .#* とかのバックアップファイルを作らない
-(setq auto-save-default nil)
-
 ;;テーマの読み込み
 										;(load-theme 'adwaita t)
 
@@ -91,9 +130,6 @@
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-
-;; スクリーンの最大化
-(set-frame-parameter nil 'fullscreen 'maximized)
 
 ;; 現在行ハイライト
 (global-hl-line-mode t)
