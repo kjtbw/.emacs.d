@@ -1,6 +1,11 @@
 ac-comphist.dat
-auto-save-list/
-backups/
+
+#空ディレクトリとして保存
+auto-save-list/*
+!.gitkeep
+backups/*
+!.gitkeep
+
 bookmarks
 .org-id-locations
 .cask/
