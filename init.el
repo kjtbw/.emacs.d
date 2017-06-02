@@ -1,33 +1,69 @@
 ;;;;;;;;;;;;;plus content
-;display filename on title var
-(setq frame-title-format (format "%%b - %s-%s@%s" invocation-name emacs-version system-name))
-;=> "%b - emacs-23.3.1@HOST-PC"
+;; load-path を追加する関数
+(defun add-to-load-path (&rest paths)
+  (let (path)
+	(dolist (path paths paths)
+	  (let ((default-directory
+			  (expand-file-name (concat user-emacs-directory path))))
+		(add-to-list 'load-path default-directory)
+		(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+			(normal-top-level-add-subdirs-to-load-path))))))
 
+;; load-pathの追加とロード，init.elの初めに書くこと
+(add-to-load-path "elisp" "conf" "elpa" "plugins")
+;; filenameには拡張子はいらない
+;; ファイルが増えてきたら，init-loaderを使う
+(load "keybind")
+
+;; 初期化
+;; (package-initialize)
+;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(fset 'package-desc-vers 'package--ac-desc-version)
+(package-initialize)
+
+;; auto-install の設定
+(when (require 'auto-install nil t)
+  (setq auto-install-directory "~/.emacs.d/elisp/")
+  (auto-install-update-emacswiki-package-name t)
+  (auto-install-compatibility-setup))
+
+;; redoの設定
+(when (require 'redo+ nil t)
+  (global-set-key (kbd "M-u") 'redo))
+
+;; display filename on title var
+ (setq frame-title-format (format "%%b - %s-%s@%s" invocation-name emacs-version system-name))
+;; => "%b - emacs-EMCAS-VERSION@HOST-PC"
 ;; %b : バッファ名を表示する
 ;; invocation-name : 起動したEmacsのプログラム名
 ;; emacs-version : emacsのバージョン名
 ;; system-name : マシン名(ホスト名)
+(setq icon-title-format (format "%%b - %s-%s@%s" invocation-name emacs-version system-name))
 
-;====================================
-;フレーム位置設定(ウィンドウ）
-;====================================
+
+;;; named
+;; (setq frame-title-format
+;;       (if (buffer-file-name)
+;;           (format "%%f - Emacs")
+;;         (format "%%b - Emacs")))
+
+
+;; ====================================
+;; フレーム位置設定(ウィンドウ）
+;; ====================================
 ( setq initial-frame-alist
        (append
-        '(;(top . 22)    ; フレームの Y 位置(ピクセル数)
-		  ;(left . 45)    ; フレームの X 位置(ピクセル数)
+        '(;; (top . 22)    ; フレームの Y 位置(ピクセル数)
+		  ;; (left . 45)    ; フレームの X 位置(ピクセル数)
 		  (width . 82)    ; フレーム幅(文字数)
 		  (height . 41)   ; フレーム高(文字数)
 		  ) initial-frame-alist))
 ;; スクリーンの最大化
-;(set-frame-parameter nil 'fullscreen 'maximized)
+;; (set-frame-parameter nil 'fullscreen 'maximized)
 
-;key bind
-;(define-key global-map (kbd "M-y") 'anything-show-kill-ring)
-
-;"C-t"でウインドウを切り替える, 初期値はtranspose-chars
-(define-key global-map (kbd "C-t") 'other-window)
-;undo, default undo is "Ctrl_x u, default "Ctrl_u" is none"
-(define-key global-map (kbd "C-u") 'undo)
 
 ;; *.~ とかのバックアップファイルをbackupsに保存
 (add-to-list 'backup-directory-alist
@@ -36,23 +72,17 @@
 (setq auto-save-file-name-transforms
 	  '((".*" "~/.emacs.d/backups/" t)))
 ;; *.~ とかのバックアップファイルを作らない
-;(setq make-backup-files nil)
+;; (setq make-backup-files nil)
 ;; .#* とかのバックアップファイルを作らない
-;(setq auto-save-default nil)
+;; (setq auto-save-default nil)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq load-path
-      (append
-       (list
-        (expand-file-name "~/.emacs.d/plugins/markdown-mode")
-        )
-       load-path))
 
-;;for Org-mode
-										;(add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/org-mode/lisp"))
-										;(add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/org-mode/contlib/lisp") t)
+
+;; for Org-mode
+;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/org-mode/lisp"))
+;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/org-mode/contlib/lisp") t)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
@@ -73,21 +103,21 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 (transient-mark-mode 1)
 
-;;for TODOList
+;; for TODOList
 (setq org-agenda-files (list "~/Dropbox/org"))
 
-;;from ext
-;;C-\\でブロックを折り畳む(C言語のみ)
+;; from ext
+;; C-\\でブロックを折り畳む(C言語のみ)
 (add-hook 'c-mode-hook
 		  '(lambda()
 			 (hs-minor-mode 1)))
 (define-key global-map(kbd"C-\\") 'hs-toggle-hidding)
-;;タブ幅4
+;; タブ幅4
 (setq default-tab-width 4)
-;;cuamode(矩形編集)
-;;範囲選択中に，C-<enter>で矩形選択モードになる．
+;; cuamode(矩形編集)
+;; 範囲選択中に，C-<enter>で矩形選択モードになる．
 (cua-mode t)
-;;そのままだとC-xが切り取りになってしまったりするので無効化
+;; そのままだとC-xが切り取りになってしまったりするので無効化
 (setq cua-enable-cua-keys nil)
 
 ;; 言語設定
@@ -121,11 +151,11 @@
 ;; 行番号表示
 (global-linum-mode t)
 
-;;テーマの読み込み
-										;(load-theme 'adwaita t)
+;; テーマの読み込み
+;; (load-theme 'adwaita t)
 
 ;; マウス・スクロールを滑らかにする
-										;(setq mac-mouse-wheel-smooth-scroll t)
+;; (setq mac-mouse-wheel-smooth-scroll t)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
@@ -141,7 +171,7 @@
        (h (* size 10))
        (fontspec (font-spec :family asciifont))
        (jp-fontspec (font-spec :family jpfont)))
-										;  (set-face-attribute 'default nil :family asciifont :height h)
+;; (set-face-attribute 'default nil :family asciifont :height h)
   (set-fontset-font nil 'japanese-jisx0213.2004-1 jp-fontspec)
   (set-fontset-font nil 'katakana-jisx0201 jp-fontspec)
   (set-fontset-font nil '(#x0080 . #x024F) fontspec)
@@ -158,10 +188,3 @@
 
 ;; 保存前に行末の空白削除
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(defun all-indent ()
-  (interactive)
-  (mark-whole-buffer)
-  (indent-region (region-beginning)(region-end)))
-
-(global-set-key (kbd  "C-x C-]") 'all-indent)

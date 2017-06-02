@@ -1,6 +1,6 @@
 ac-comphist.dat
 
-#空ディレクトリとして保存
+#空ディレクトリとして保存, .gitkeepは空ファイル
 auto-save-list/*
 !.gitkeep
 backups/*
