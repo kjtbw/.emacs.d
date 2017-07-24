@@ -896,21 +896,39 @@ You can use this to download marked files in Dired asynchronously."
 ;; (auto-install-network-available-p "www.emacswiki.org")
 (require 'timer)
 (defun auto-install-update-emacswiki-package-name (&optional unforced)
-  "Update the list of elisp package names from `EmacsWiki'.
-By default, this function will update package name forcibly.
-If UNFORCED is non-nil, just update package name when `auto-install-package-name-list' is nil."
+  ;;   "Update the list of elisp package names from `EmacsWiki'.
+  ;; By default, this function will update package name forcibly.
+  ;; If UNFORCED is non-nil, just update package name when `auto-install-package-name-list' is nil."
   (interactive)
   (unless (and unforced
-               auto-install-package-name-list)
-    (if (and (auto-install-network-available-p "www.emacswiki.org")
-             (with-timeout (5 nil)
-               (progn (auto-install-download "http://www.emacswiki.org/?action=index;raw=1"
-                                             'auto-install-handle-emacswiki-package-name))
-               t))
-      (message
-       (concat "Network unreachable!\n"
-               "Try M-x auto-install-handle-emacswiki-package-name afterward."))
-      (sit-for 2))))
+			   auto-install-package-name-list)
+ 	(if (and (auto-install-network-available-p "www.emacswiki.org")
+ 			 (with-timeout (5 nil)
+			   (progn (auto-install-download "http://www.emacswiki.org/?action=index;raw=1"
+											 'auto-install-handle-emacswiki-package-name))
+			   t))
+   		(message
+   		 (concat "Network unreachable!\n"
+   				 "Try M-x auto-install-handle-emacswiki-package-name afterward."))
+   	  (sit-for 2))
+ 	))
+
+;; (defun auto-install-update-emacswiki-package-name (&optional unforced)
+;;   "Update the list of elisp package names from `EmacsWiki'.
+;; By default, this function will update package name forcibly.
+;; If UNFORCED is non-nil, just update package name when `auto-install-package-name-list' is nil."
+;;   (interactive)
+;;   (unless (and unforced
+;;                auto-install-package-name-list)
+;; ;;	(if (auto-install-network-available-p "www.emacswiki.org")
+;; 		(auto-install-download "http://www.emacswiki.org/?action=index;raw=1"
+;; 							   'auto-install-handle-emacswiki-package-name)
+;; 	  ;; (message
+;; 	  ;;  (concat "Network unreachable!\n"
+;; 	  ;; 		   "Try M-x auto-install-handle-emacswiki-package-name afterward."))
+;; 	  ;; (sit-for 2))
+;; 	))
+
 
 (defun auto-install-dired-mark-files ()
   "Mark dired files that contain at `EmacsWiki.org'."
@@ -974,10 +992,10 @@ Note that non-elisp can be installed only via `auto-install-batch'"
     (auto-install-download
      auto-install-batch-list-el-url
      (lexical-let ((extension-name extension-name))
-       (lambda (buf)
-         (with-current-buffer buf
-           (eval-buffer)
-           (run-at-time 0 nil 'auto-install-batch-real extension-name)))))))
+	   (lambda (buf)
+		 (with-current-buffer buf
+		   (eval-buffer)
+		   (run-at-time 0 nil 'auto-install-batch-real extension-name)))))))
 
 (defun auto-install-batch-edit ()
   "Edit auto-install-batch-list.el"
@@ -993,53 +1011,53 @@ Note that non-elisp can be installed only via `auto-install-batch'"
 (defun auto-install-batch-real (&optional extension-name)
   (setq auto-install-batch-using t)
   (when auto-install-add-exec-path-flag
-      (add-to-list 'exec-path auto-install-directory))
+	(add-to-list 'exec-path auto-install-directory))
   (destructuring-bind (name delay-time limit-number (&rest urls))
-      (auto-install-batch-get-info
-       (or
-        ;; Get information list from give extension name.
-        extension-name
-        ;; Otherwise completion from user select.
-        (completing-read "Extension name: " (mapcar 'car auto-install-batch-list-internal)))
-       auto-install-batch-list-internal)
-    (or name (error "Haven't install information for `%s'." extension-name))
-    (setq auto-install-waiting-url-list urls
-          auto-install-url-queue urls)
-    (if (not (and
-              ;; Delay time is above 0.
-              delay-time
-              (> delay-time 0)
-              ;; Limit number is above 0.
-              limit-number
-              (> limit-number 0)))
-        (auto-install-from-url-list urls)
-      (let ((delay-counter 0)
-            install-list)
-        (while urls
-          (if (> (length urls) limit-number)
-              ;; Install apart libraries list under `limit-number'
-              (progn
-                (setq install-list (nthcar limit-number urls))
-                (run-with-timer
-                 (* delay-counter delay-time)
-                 nil
-                 'auto-install-from-url-list install-list)
-                (setq urls (nthcdr+ limit-number urls))
-                (incf delay-counter))
-            ;; Install remain libraries list.
-            (setq install-list urls)
-            (run-with-timer
-             (* delay-counter delay-time)
-             nil
-             'auto-install-from-url-list install-list)
-            (setq urls nil)))))))
+	  (auto-install-batch-get-info
+	   (or
+		;; Get information list from give extension name.
+		extension-name
+		;; Otherwise completion from user select.
+		(completing-read "Extension name: " (mapcar 'car auto-install-batch-list-internal)))
+	   auto-install-batch-list-internal)
+	(or name (error "Haven't install information for `%s'." extension-name))
+	(setq auto-install-waiting-url-list urls
+		  auto-install-url-queue urls)
+	(if (not (and
+			  ;; Delay time is above 0.
+			  delay-time
+			  (> delay-time 0)
+			  ;; Limit number is above 0.
+			  limit-number
+			  (> limit-number 0)))
+		(auto-install-from-url-list urls)
+	  (let ((delay-counter 0)
+			install-list)
+		(while urls
+		  (if (> (length urls) limit-number)
+			  ;; Install apart libraries list under `limit-number'
+			  (progn
+				(setq install-list (nthcar limit-number urls))
+				(run-with-timer
+				 (* delay-counter delay-time)
+				 nil
+				 'auto-install-from-url-list install-list)
+				(setq urls (nthcdr+ limit-number urls))
+				(incf delay-counter))
+			;; Install remain libraries list.
+			(setq install-list urls)
+			(run-with-timer
+			 (* delay-counter delay-time)
+			 nil
+			 'auto-install-from-url-list install-list)
+			(setq urls nil)))))))
 
 ;;; borrowed from eev.el
 (defun auto-install-flatten (obj &rest rest)
   (cond (rest (append (auto-install-flatten obj) (auto-install-flatten rest)))
-	((null obj) nil)
-	((listp obj) (append (auto-install-flatten (car obj)) (auto-install-flatten (cdr obj))))
-	(t (list obj))))
+		((null obj) nil)
+		((listp obj) (append (auto-install-flatten (car obj)) (auto-install-flatten (cdr obj))))
+		(t (list obj))))
 
 (defun auto-install-batch-get-info (extension batch-list)
   (let* ((it (assoc extension batch-list))
@@ -1064,35 +1082,35 @@ Note that non-elisp can be installed only via `auto-install-batch'"
 (dont-compile
   (when (fboundp 'expectations)
     (expectations
-      (desc "auto-install-flatten")
-      (expect '(1 2 3 4 5 6 7 8 9)
-        (auto-install-flatten '((1 2 3) (4 5) (((6)) 7) nil nil 8 9)))
-      (expect '(1 2 3 4 5 6 7 8 9)
-        (auto-install-flatten '(1 2 3) '(4 5) '(((6)) 7) nil nil 8 9))
-      (desc "auto-install-batch-get-info")
-      (expect '(nil nil nil (nil))
-        (auto-install-batch-get-info
-         "not-found"
-         '(("foo" nil nil ("https://example.com/1.el")))))
-      (expect '("foo" nil nil ("http://example.com/1.el"))
-        (auto-install-batch-get-info
-         "foo"
-         '(("foo" nil nil ("http://example.com/1.el")))))
-      (expect '("withdep" nil nil ("http://example.com/1.el"
-                                   "http://example.com/2.el"))
-        (auto-install-batch-get-info
-         "withdep"
-         '(("foo" nil nil ("http://example.com/1.el"))
-           ("withdep" nil nil ("foo" "http://example.com/2.el")))))
-      (expect '("withdep-recursive" nil nil ("http://example.com/1.el"
-                                             "http://example.com/2.el"
-                                             "http://example.com/3.el"))
-        (auto-install-batch-get-info
-         "withdep-recursive"
-         '(("foo" nil nil ("http://example.com/1.el"))
-           ("withdep" nil nil ("foo" "http://example.com/2.el"))
-           ("withdep-recursive" nil nil ("withdep" "http://example.com/3.el")))))
-      )))
+	 (desc "auto-install-flatten")
+	 (expect '(1 2 3 4 5 6 7 8 9)
+			 (auto-install-flatten '((1 2 3) (4 5) (((6)) 7) nil nil 8 9)))
+	 (expect '(1 2 3 4 5 6 7 8 9)
+			 (auto-install-flatten '(1 2 3) '(4 5) '(((6)) 7) nil nil 8 9))
+	 (desc "auto-install-batch-get-info")
+	 (expect '(nil nil nil (nil))
+			 (auto-install-batch-get-info
+			  "not-found"
+			  '(("foo" nil nil ("https://example.com/1.el")))))
+	 (expect '("foo" nil nil ("http://example.com/1.el"))
+			 (auto-install-batch-get-info
+			  "foo"
+			  '(("foo" nil nil ("http://example.com/1.el")))))
+	 (expect '("withdep" nil nil ("http://example.com/1.el"
+								  "http://example.com/2.el"))
+			 (auto-install-batch-get-info
+			  "withdep"
+			  '(("foo" nil nil ("http://example.com/1.el"))
+				("withdep" nil nil ("foo" "http://example.com/2.el")))))
+	 (expect '("withdep-recursive" nil nil ("http://example.com/1.el"
+											"http://example.com/2.el"
+											"http://example.com/3.el"))
+			 (auto-install-batch-get-info
+			  "withdep-recursive"
+			  '(("foo" nil nil ("http://example.com/1.el"))
+				("withdep" nil nil ("foo" "http://example.com/2.el"))
+				("withdep-recursive" nil nil ("withdep" "http://example.com/3.el")))))
+	 )))
 
 
 (defun auto-install-use-wget-p ()
@@ -1118,15 +1136,15 @@ default is `auto-install-handle-download-content'."
 (defun auto-install-download-by-wget (url handle-function download-buffer)
   (with-current-buffer download-buffer
     (setq auto-install-download-buffer (get-buffer-create (concat (buffer-name download-buffer)
-                                                "-wget")))
+																  "-wget")))
     (setq auto-install-download-url url)
     (set-process-sentinel
      (start-process "auto-install-wget" (current-buffer)
                     auto-install-wget-command "-q" "-O-" "--no-check-certificate" url)
      (lexical-let ((handle-function handle-function))
-       (lambda (proc stat)
-         (auto-install-download-callback-continue (buffer-name (process-buffer proc))
-                                                  handle-function))))))
+	   (lambda (proc stat)
+		 (auto-install-download-callback-continue (buffer-name (process-buffer proc))
+												  handle-function))))))
 
 (defun auto-install-download-by-url-retrieve (url handle-function download-buffer)
   (let* ((url-request-method "GET")
@@ -1298,7 +1316,7 @@ This command just run when have exist old version."
         (unless auto-install-batch-using
           ;; Make sure file suffix with `.el'.
           (while (not (string-match ".*\.el$" filename))
-           (setq filename (read-string "Please input file name suffix with `.el': "))))
+			(setq filename (read-string "Please input file name suffix with `.el': "))))
         ;; Get file path.
         (setq file-path
               (or
