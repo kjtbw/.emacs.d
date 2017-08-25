@@ -1,6 +1,16 @@
 ;; まだpackageなし
 ;; (define-key global-map (kbd "M-y") 'anything-show-kill-ring)
 
+;; 途中
+(defun make-itemize (n)
+  (interactive "nCount:")
+  (insert "\\begin{itemize}\n")
+  ;; (while n==0
+  ;; 	((insert "\item")
+  ;; 	 (n=n+1))
+  (insert "\\end{itemize}\n")
+  )
+
 
 ;; "C-x C-]"で関数のインデントを揃える
 (require 'point-undo)
@@ -9,9 +19,11 @@
   (mark-whole-buffer)
   (indent-region (region-beginning)(region-end))
   (point-undo))
-
 (global-set-key (kbd  "C-x C-]") 'all-indent)
 
+;; C-x C-c でEmacs終了時に質問する.
+;; 正確には，そのウィンドウのEmacsがプロセスを保持している場合にのみ質問する．
+(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; "C-t"でウインドウがひとつならウインドウを上下に分割する
 ;; ウインドウが２つ以上ならウインドウを正順に切り替える, 初期値はtranspose-words;;
@@ -76,7 +88,7 @@
 (define-key global-map (kbd "C-u") 'undo)
 
 ;; "C_hでバックスペース, カーソル前の一文字を削除，初期値はhelp-command"
- (define-key key-translation-map [?\C-h] [?\C-?])
+(define-key key-translation-map [?\C-h] [?\C-?])
 
 ;; C-zh to help
 (global-unset-key "\C-z")
