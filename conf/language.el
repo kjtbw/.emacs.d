@@ -1,4 +1,3 @@
-
 ;; from ext
 ;; C-\\でブロックを折り畳む(C言語のみ)
 (add-hook 'c-mode-hook

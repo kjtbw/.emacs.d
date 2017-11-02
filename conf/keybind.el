@@ -21,6 +21,7 @@
   (point-undo))
 (global-set-key (kbd  "C-x C-]") 'all-indent)
 
+
 ;; C-x C-c でEmacs終了時に質問する.
 ;; 正確には，そのウィンドウのEmacsがプロセスを保持している場合にのみ質問する．
 (setq confirm-kill-emacs 'y-or-n-p)

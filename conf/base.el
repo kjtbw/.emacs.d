@@ -52,3 +52,6 @@
 
 ;; for TODOList
 (setq org-agenda-files (list "~/Dropbox/org"))
+
+;; for markdownmode
+(setq markdown-command "multimarkdown")

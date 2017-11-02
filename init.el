@@ -20,6 +20,10 @@
 (load "language")
 (load "require")
 (load "keybind")
+
+;; for ini-loader
+;; (init-loader-load "~/.emacs.d/conf/")
+
 ;; 初期化
 ;; (package-initialize)
 ;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -28,3 +32,35 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (fset 'package-desc-vers 'package--ac-desc-version)
 (package-initialize)
+(require 'cask)
+(cask-initialize)
+;; helm
+(global-set-key (kbd "M-x") #'helm-M-x)
+(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+(global-set-key (kbd "C-x C-f") #'helm-find-files)
+(require 'helm-config)
+(helm-mode 1)
+;; smartparens
+(require 'smartparens-config)
+(smartparens-global-mode t)
+;; rainbow-delimiters
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;; mhc
+(setq load-path
+      (cons "~/src/mhc/emacs" load-path))
+(autoload 'mhc "mhc" "Message Harmonized Calendar system." t)
+;; smooth-scroll
+;; (require 'smooth-scroll)
+;; (smooth-scroll-mode t)
+
+;; anzu
+(global-anzu-mode +1)
+(custom-set-variables
+ '(anzu-mode-lighter "")
+ '(anzu-deactivate-region t)
+ '(anzu-search-threshold 1000))
+
+;; volatile-highlights
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
