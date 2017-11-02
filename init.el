@@ -57,10 +57,30 @@
 ;; anzu
 (global-anzu-mode +1)
 (custom-set-variables
- '(anzu-mode-lighter "")
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(anzu-deactivate-region t)
- '(anzu-search-threshold 1000))
+ '(anzu-mode-lighter "")
+ '(anzu-search-threshold 1000)
+ '(package-selected-packages
+   (quote
+	(yasnippet web-mode volatile-highlights use-package smooth-scroll smex smartparens rainbow-delimiters projectile prodigy popwin point-undo pallet nyan-mode multiple-cursors mhc magit init-loader idle-highlight-mode htmlize helm flycheck-cask expand-region exec-path-from-shell drag-stuff auto-install auto-complete anzu))))
 
 ;; volatile-highlights
 (require 'volatile-highlights)
 (volatile-highlights-mode t)
+
+;; expand-region
+(require 'expand-region)
+(global-set-key (kbd "C-@") 'er/expand-region)
+(global-set-key (kbd "C-M-@") 'er/contract-region) ;; リージョンを狭める
+;; transient-mark-modeが nilでは動作しませんので注意
+(transient-mark-mode t)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

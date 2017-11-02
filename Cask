@@ -38,3 +38,4 @@
 (depends-on "smooth-scroll")
 (depends-on "anzu")
 (depends-on "volatile-highlights")
+(depends-on "expand-region")
