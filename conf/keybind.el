@@ -89,12 +89,12 @@
 (define-key global-map (kbd "C-u") 'undo)
 
 ;; "C_hでバックスペース, カーソル前の一文字を削除，初期値はhelp-command"
-(define-key key-translation-map [?\C-h] [?\C-?])
+;; (define-key key-translation-map [?\C-h] [?\C-?])
 
 ;; C-zh to help
-(global-unset-key "\C-z")
-(global-set-key "\C-zh" 'help)
-(global-set-key "\C-z\C-z" 'suspend-emacs)
+;; (global-unset-key "\C-z")
+;; (global-set-key "\C-zh" 'help)
+;; (global-set-key "\C-z\C-z" 'suspend-emacs)
 
 ;; IJKLをwasdみたいに矢印配置
 ;; 使いにくいのでやめる

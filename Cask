@@ -39,3 +39,4 @@
 (depends-on "anzu")
 (depends-on "volatile-highlights")
 (depends-on "expand-region")
+(depends-on "elscreen")
